@@ -17,20 +17,40 @@ namespace CppMonadTests {
 	 	assert(show(b) == "[0, 1, 0]");
 	}
 	
-	void testListApplicative() {
-		auto list = pure<List>(1);
+	void testListSemigroup() {
+		List<int> lhs = { 1 };
+		List<int> rhs = { 2, 3 };
+		assert(show(append(lhs, rhs)) == "[1, 2, 3]");
+	}
+	
+	void testListMonoid() {
+		auto lhs = mempty<List<int>>();
+		List<int> rhs = { 2, 3 };
+		assert(show(append(lhs, rhs)) == "[2, 3]");
+	}
+	
+	void testListApply() {
+		auto list = List<int>({ 1 });
 		auto func = List<std::function<int(int)>>({
 			[](const auto& i) { return i; },
 			[](const auto& i) { return i * 2; }
 		});
-		assert(show(seqApply(func, list)) == "[1, 2]");
-		assert(show(seqApply(func, seqApply(func, list))) == "[1, 2, 2, 4]");
+		assert(show(apply1(func, list)) == "[1, 2]");
+		assert(show(apply1(func, apply1(func, list))) == "[1, 2, 2, 4]");
+	}
+	
+	void testListApplicative() {
+		auto list = pure<List>(1);
+		assert(show(list) == "[1]");
 	}
 	
 	void testList() {
 		std::cout << __func__ << std::endl;
 		testListShow();
 		testListFunctor();
+		testListSemigroup();
+		testListMonoid();
+		testListApply();
 		testListApplicative();
 	}
 }

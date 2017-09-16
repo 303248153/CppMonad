@@ -4,6 +4,9 @@
 #include <sstream>
 #include "../Class/Show.hpp"
 #include "../Class/Functor.hpp"
+#include "../Class/Semigroup.hpp"
+#include "../Class/Monoid.hpp"
+#include "../Class/Apply.hpp"
 #include "../Class/Applicative.hpp"
 
 namespace CppMonad {
@@ -41,15 +44,31 @@ namespace CppMonad {
 		}
 	};
 	
-	template <>
-	struct Applicative<List> {
-		template <class T>
-		static List<T> pure(T&& value) {
-			return List<T>({ value });
+	template <class T>
+	struct Semigroup<List<T>> {
+		static List<T> append(const List<T>& lhs, const List<T>& rhs) {
+			List<T> result;
+			for (const auto& item : lhs) {
+				result.emplace_back(item);
+			}
+			for (const auto& item : rhs) {
+				result.emplace_back(item);
+			}
+			return result;
 		}
-		
+	};
+	
+	template <class T>
+	struct Monoid<List<T>> {
+		static List<T> mempty() {
+			return List<T>();
+		}
+	};
+	
+	template <>
+	struct Apply<List> {
 		template <class Func, class A>
-		static auto seqApply(
+		static auto apply1(
 			const List<Func>& func,
 			const List<A>& from) {
 			List<decltype(std::declval<Func>()(std::declval<A>()))> to;
@@ -59,6 +78,14 @@ namespace CppMonad {
 				}
 			}
 			return to;
+		}
+	};
+	
+	template <>
+	struct Applicative<List> {
+		template <class T>
+		static List<T> pure(T&& value) {
+			return List<T>({ value });
 		}
 	};
 }
