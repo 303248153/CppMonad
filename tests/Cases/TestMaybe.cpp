@@ -1,7 +1,9 @@
 #include <iostream>
 #include <cassert>
+#include <functional>
 #include <CppMonad/Data/Maybe.hpp>
 #include <CppMonad/Data/String.hpp>
+#include <CppMonad/Utils/Partial.hpp>
 
 namespace CppMonadTests {
 	using namespace CppMonad;
@@ -41,23 +43,29 @@ namespace CppMonadTests {
 		assert(show(apply1(nothingFunc, nothingStr)) == "Nothing");
 	}
 	
+	void testMaybeApplyLift() {
+		auto concat = Partial([](String lhs, String rhs) {
+			return lhs + rhs;
+		});
+		//auto otherconcat = concat;
+		//auto lhsStr = pure<Maybe>(String("hello "));
+		// auto rhsStr = String("world");
+		//auto concat1 = map(concat, lhsStr);
+		// auto result = apply1(concat1, pure<Maybe>(rhsStr));
+		// std::cout << (rhsStr) << std::endl;
+		
+		
+		//auto lhsStr = pure<Maybe>(String("hello "));
+		//auto rhsStr = pure<Maybe>(String("world"));
+		//auto nothingStr = Nothing<String>();
+		//assert(show(lift2(concat, lhsStr, rhsStr)) == "Just hello world");
+		/* assert(show(lift2(concat, lhsStr, nothingStr)) == "Nothing");
+		assert(show(lift2(concat, nothingStr, rhsStr)) == "Nothing"); */
+	}
+	
 	void testMaybeApplicative() {
 		auto justStr = pure<Maybe>(String("abc"));
 		assert(show(justStr) == "Just abc");
-	}
-	
-	void testMaybeApplicativeLift() {
-		auto concat = [](const auto& lhs) {
-			return [lhs](const auto& rhs) {
-				return lhs + rhs;
-			};
-		};
-		auto lhsStr = pure<Maybe>(String("hello "));
-		auto rhsStr = pure<Maybe>(String("world"));
-		auto nothingStr = Nothing<String>();
-		assert(show(lift2(concat, lhsStr, rhsStr)) == "Just hello world");
-		assert(show(lift2(concat, lhsStr, nothingStr)) == "Nothing");
-		assert(show(lift2(concat, nothingStr, rhsStr)) == "Nothing");
 	}
 	
 	void testMaybe() {
@@ -67,7 +75,7 @@ namespace CppMonadTests {
 		testMaybeSemigroup();
 		testMaybeMonoid();
 		testMaybeApply();
+		testMaybeApplyLift();
 		testMaybeApplicative();
-		testMaybeApplicativeLift();
 	}
 }
