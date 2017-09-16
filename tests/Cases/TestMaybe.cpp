@@ -33,26 +33,26 @@ namespace CppMonadTests {
 	}
 	
 	void testMaybeApply() {
-		auto justStr = Just(String("abc"));
+		auto justStrA = Just(String("abc"));
+		auto justStrB = Just(String("abcde"));
+		auto justFunc = Just(Partial([](auto&& a, auto&& b) { return a.size() + b.size(); }));
 		auto nothingStr = Nothing<String>();
-		auto justFunc = Just([](const auto& str) { return str.size(); });
-		auto nothingFunc = Nothing<int(*)(String)>();
-		assert(show(apply1(justFunc, justStr)) == "Just 3");
-		assert(show(apply1(justFunc, nothingStr)) == "Nothing");
-		assert(show(apply1(nothingFunc, justStr)) == "Nothing");
-		assert(show(apply1(nothingFunc, nothingStr)) == "Nothing");
+		auto nothingFunc = Nothing<PartialHolder<int(*)(String, String)>>();
+		assert(show(applyN(justFunc, justStrA, justStrB)) == "Just 8");
+		assert(show(applyN(justFunc, justStrA, nothingStr)) == "Nothing");
+		assert(show(applyN(nothingFunc, justStrA, justStrB)) == "Nothing");
+		assert(show(applyN(nothingFunc, nothingStr, nothingStr)) == "Nothing");
 	}
 	
 	void testMaybeApplyLift() {
-		auto concat = Partial([](String lhs, String rhs) {
-			return lhs + rhs;
-		});
-		auto lhsStr = pure<Maybe>(String("hello "));
-		auto rhsStr = pure<Maybe>(String("world"));
+		auto concat = Partial([](auto&& a, auto&& b, auto&& c) { return a + b + c; });
+		auto justStrA = pure<Maybe>(String("hello"));
+		auto justStrB = pure<Maybe>(String(" "));
+		auto justStrC = pure<Maybe>(String("world"));
 		auto nothingStr = Nothing<String>();
-		assert(show(lift2(concat, lhsStr, rhsStr)) == "Just hello world");
-		assert(show(lift2(concat, lhsStr, nothingStr)) == "Nothing");
-		assert(show(lift2(concat, nothingStr, rhsStr)) == "Nothing");
+		assert(show(liftN(concat, justStrA, justStrB, justStrC)) == "Just hello world");
+		assert(show(liftN(concat, justStrA, justStrB, nothingStr)) == "Nothing");
+		assert(show(liftN(concat, nothingStr, justStrB, justStrC)) == "Nothing");
 	}
 	
 	void testMaybeApplicative() {

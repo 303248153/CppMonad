@@ -35,8 +35,8 @@ namespace CppMonadTests {
 			[](const auto& i) { return i; },
 			[](const auto& i) { return i * 2; }
 		});
-		assert(show(apply1(func, list)) == "[1, 2]");
-		assert(show(apply1(func, apply1(func, list))) == "[1, 2, 2, 4]");
+		assert(show(applyN(func, list)) == "[1, 2]");
+		assert(show(applyN(func, applyN(func, list))) == "[1, 2, 2, 4]");
 	}
 	
 	void testListApplicative() {
