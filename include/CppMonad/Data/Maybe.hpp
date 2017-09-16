@@ -37,7 +37,7 @@ namespace CppMonad {
 		static auto map(
 			const Func& func,
 			const Maybe<A>& from) {
-			Maybe<decltype(func(std::declval<A>()))> to;
+			Maybe<decltype(func(std::declval<const A>()))> to;
 			if (from.has_value()) {
 				to.emplace(func(from.value()));
 			}
@@ -71,7 +71,7 @@ namespace CppMonad {
 			if (func.has_value() && from.has_value()) {
 				return Just(func.value()(from.value()));
 			}
-			return Nothing<decltype(std::declval<Func>()(std::declval<A>()))>();
+			return Nothing<decltype(std::declval<const Func>()(std::declval<const A>()))>();
 		}
 	};
 	
