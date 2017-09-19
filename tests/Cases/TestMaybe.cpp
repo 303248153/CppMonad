@@ -60,6 +60,15 @@ namespace CppMonadTests {
 		assert(show(justStr) == "Just abc");
 	}
 	
+	void testMaybeBind() {
+		auto justStr = Just(String("abc"));
+		auto justSize = bind1(justStr, [](auto&& str) { return Just(str.size()); });
+		assert(show(justSize) == "Just 3");
+		auto nothingStr = Nothing<String>();
+		auto nothingSize = bind1(nothingStr, [](auto&& str) { return Just(str.size()); });
+		assert(show(nothingSize) == "Nothing");
+	}
+	
 	void testMaybe() {
 		std::cout << __func__ << std::endl;
 		testMaybeShow();
@@ -69,5 +78,6 @@ namespace CppMonadTests {
 		testMaybeApply();
 		testMaybeApplyLift();
 		testMaybeApplicative();
+		testMaybeBind();
 	}
 }

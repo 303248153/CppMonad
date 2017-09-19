@@ -8,6 +8,7 @@
 #include "../Class/Monoid.hpp"
 #include "../Class/Apply.hpp"
 #include "../Class/Applicative.hpp"
+#include "../Class/Bind.hpp"
 
 namespace CppMonad {
 	template <class T, class Alloc = std::allocator<T>>
@@ -37,21 +38,21 @@ namespace CppMonad {
 		template <class A, class Func>
 		static auto map(
 			const Func& func,
-			const List<A>& from) {
-			List<decltype(func(std::declval<const A>()))> to;
-			std::transform(from.cbegin(), from.cend(), std::back_inserter(to), func);
-			return to;
+			const List<A>& a) {
+			List<decltype(func(std::declval<const A>()))> b;
+			std::transform(a.cbegin(), a.cend(), std::back_inserter(b), func);
+			return b;
 		}
 	};
 	
 	template <class T>
 	struct Semigroup<List<T>> {
-		static List<T> append(const List<T>& lhs, const List<T>& rhs) {
+		static List<T> append(const List<T>& a, const List<T>& b) {
 			List<T> result;
-			for (const auto& item : lhs) {
+			for (const auto& item : a) {
 				result.emplace_back(item);
 			}
-			for (const auto& item : rhs) {
+			for (const auto& item : b) {
 				result.emplace_back(item);
 			}
 			return result;
@@ -70,14 +71,14 @@ namespace CppMonad {
 		template <class Func, class A>
 		static auto apply1(
 			const List<Func>& func,
-			const List<A>& from) {
-			List<decltype(std::declval<const Func>()(std::declval<const A>()))> to;
+			const List<A>& a) {
+			List<decltype(std::declval<const Func>()(std::declval<const A>()))> b;
 			for (const auto& f : func) {
-				for (const auto& a : from) {
-					to.emplace_back(f(a));
+				for (const auto& item : a) {
+					b.emplace_back(f(item));
 				}
 			}
-			return to;
+			return b;
 		}
 	};
 	
@@ -86,6 +87,22 @@ namespace CppMonad {
 		template <class T>
 		static List<T> pure(T&& value) {
 			return List<T>({ value });
+		}
+	};
+	
+	template <>
+	struct Bind<List> {
+		template <class Func, class A>
+		static auto bind1(
+			const List<A>& a,
+			const Func& func) {
+			decltype(std::declval<const Func>()(std::declval<const A>())) b;
+			for (const auto& item : a) {
+				for (const auto& result : func(item)) {
+					b.emplace_back(result);
+				}
+			}
+			return b;
 		}
 	};
 }

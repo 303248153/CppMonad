@@ -6,6 +6,7 @@
 #include "../Class/Monoid.hpp"
 #include "../Class/Apply.hpp"
 #include "../Class/Applicative.hpp"
+#include "../Class/Bind.hpp"
 
 namespace CppMonad {
 	template <class T>
@@ -36,20 +37,20 @@ namespace CppMonad {
 		template <class A, class Func>
 		static auto map(
 			const Func& func,
-			const Maybe<A>& from) {
-			Maybe<decltype(func(std::declval<const A>()))> to;
-			if (from.has_value()) {
-				to.emplace(func(from.value()));
+			const Maybe<A>& a) {
+			Maybe<decltype(func(std::declval<const A>()))> b;
+			if (a.has_value()) {
+				b.emplace(func(a.value()));
 			}
-			return to;
+			return b;
 		}
 	};
 	
 	template <class T>
 	struct Semigroup<Maybe<T>> {
-		static Maybe<T> append(const Maybe<T>& lhs, const Maybe<T>& rhs) {
-			if (lhs.has_value() && rhs.has_value()) {
-				return Just<T>(Semigroup<T>::append(lhs.value(), rhs.value()));
+		static Maybe<T> append(const Maybe<T>& a, const Maybe<T>& b) {
+			if (a.has_value() && b.has_value()) {
+				return Just<T>(Semigroup<T>::append(a.value(), b.value()));
 			}
 			return Nothing<T>();
 		}
@@ -80,6 +81,20 @@ namespace CppMonad {
 		template <class T>
 		static Maybe<T> pure(T&& value) {
 			return Just(std::forward<T>(value));
+		}
+	};
+	
+	template <>
+	struct Bind<Maybe> {
+		template <class Func, class A>
+		static auto bind1(
+			const Maybe<A>& a,
+			const Func& func) {
+			decltype(std::declval<const Func>()(std::declval<const A>())) b;
+			if (a.has_value()) {
+				b = func(a.value());
+			}
+			return b;
 		}
 	};
 }

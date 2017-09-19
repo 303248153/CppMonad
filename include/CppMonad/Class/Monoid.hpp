@@ -2,8 +2,10 @@
 
 namespace CppMonad {
 	template <class T>
-	class Monoid {
-		static T mempty();
+	struct Monoid {
+		static T mempty() {
+			return T();
+		}
 	};
 	
 	template <class T>

@@ -8,7 +8,7 @@ namespace CppMonad {
 		template <class Func, class A>
 		static auto apply1(
 			const F<Func>& func,
-			const F<A>& from) ->
+			const F<A>& a) ->
 			F<decltype(std::declval<const Func>()(std::declval<const A>()))> = delete;
 	};
 	

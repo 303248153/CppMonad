@@ -7,18 +7,4 @@
 
 namespace CppMonad {
 	using String = std::string;
-	
-	template <>
-	struct Semigroup<String> {
-		static String append(const String& lhs, const String& rhs) {
-			return lhs + rhs;
-		}
-	};
-	
-	template <>
-	struct Monoid<String> {
-		static String mempty() {
-			return "";
-		}
-	};
 }

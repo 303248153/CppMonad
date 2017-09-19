@@ -2,6 +2,7 @@
 #include <cassert>
 #include <functional>
 #include <CppMonad/Data/List.hpp>
+#include <CppMonad/Data/String.hpp>
 
 namespace CppMonadTests {
 	using namespace CppMonad;
@@ -44,6 +45,19 @@ namespace CppMonadTests {
 		assert(show(list) == "[1]");
 	}
 	
+	void testListBind() {
+		auto list = List<String>({ "he", "l", "lo" });
+		auto actual = bind1(list, [](auto& item) {
+			List<int> result;
+			for (const auto& c : item) {
+				result.emplace_back(c);
+			}
+			return result;
+		});
+		auto excepted = List<int>({ 'h', 'e', 'l', 'l', 'o' });
+		assert(show(actual) == show(excepted));
+	}
+	
 	void testList() {
 		std::cout << __func__ << std::endl;
 		testListShow();
@@ -52,5 +66,6 @@ namespace CppMonadTests {
 		testListMonoid();
 		testListApply();
 		testListApplicative();
+		testListBind();
 	}
 }
