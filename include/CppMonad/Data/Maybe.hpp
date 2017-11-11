@@ -34,7 +34,7 @@ namespace CppMonad {
 	
 	template <>
 	struct Functor<Maybe> {
-		template <class A, class Func>
+		template <class Func, class A>
 		static auto map(
 			const Func& func,
 			const Maybe<A>& a) {

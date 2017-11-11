@@ -39,7 +39,7 @@ namespace CppMonad {
 	// but c++ isn't support partial template specialization with template template class
 	template <>
 	struct Functor<PartialEither> {
-		template <class TLeft, class TRight, class Func>
+		template <class Func, class TLeft, class TRight>
 		static auto map(
 			const Func& func,
 			const Either<TLeft, TRight>& a) {
@@ -53,7 +53,7 @@ namespace CppMonad {
 		}
 	};
 
-	template <class TLeft, class TRight, class Func>
+	template <class Func, class TLeft, class TRight>
 	static auto map(
 		const Func& func,
 		const Either<TLeft, TRight>& a) {

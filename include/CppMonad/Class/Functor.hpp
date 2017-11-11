@@ -4,14 +4,14 @@
 namespace CppMonad {
 	template <template <class> class F>
 	struct Functor {
-		template <class A, class Func>
+		template <class Func, class A>
 		static auto map(
 			const Func& func,
 			const F<A>& a) ->
 			F<decltype(func(std::declval<const A>()))> = delete;
 	};
 	
-	template <template <class> class F, class A, class Func>
+	template <template <class> class F, class Func, class A>
 	static auto map(
 		const Func& func,
 		const F<A>& a) {
