@@ -38,11 +38,11 @@ namespace CppMonad {
 		static auto map(
 			const Func& func,
 			const Maybe<A>& a) {
-			Maybe<decltype(func(std::declval<const A>()))> b;
+			using B = decltype(func(a.value()));
 			if (a.has_value()) {
-				b.emplace(func(a.value()));
+				return Just<B>(func(a.value()));
 			}
-			return b;
+			return Nothing<B>();
 		}
 	};
 	
@@ -68,11 +68,12 @@ namespace CppMonad {
 		template <class Func, class A>
 		static auto apply1(
 			const Maybe<Func>& func,
-			const Maybe<A>& from) {
-			if (func.has_value() && from.has_value()) {
-				return Just(func.value()(from.value()));
+			const Maybe<A>& a) {
+			using B = decltype(func.value()(a.value()));
+			if (func.has_value() && a.has_value()) {
+				return Just<B>(func.value()(a.value()));
 			}
-			return Nothing<decltype(std::declval<const Func>()(std::declval<const A>()))>();
+			return Nothing<B>();
 		}
 	};
 	
@@ -90,11 +91,11 @@ namespace CppMonad {
 		static auto bind1(
 			const Maybe<A>& a,
 			const Func& func) {
-			decltype(std::declval<const Func>()(std::declval<const A>())) b;
+			using B = decltype(func(a.value()));
 			if (a.has_value()) {
-				b = func(a.value());
+				return func(a.value());
 			}
-			return b;
+			return B();
 		}
 	};
 }

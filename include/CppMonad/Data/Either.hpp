@@ -43,13 +43,11 @@ namespace CppMonad {
 		static auto map(
 			const Func& func,
 			const Either<TLeft, TRight>& a) {
-			Either<TLeft, decltype(func(std::declval<const TRight>()))> b;
+			using NextRight = decltype(func(std::get<1>(a)));
 			if (a.index() == 0) {
-				b = std::get<0>(a);
-			} else {
-				b = func(std::get<1>(a));
+				return Left<TLeft, NextRight>(static_cast<TLeft>(std::get<0>(a)));
 			}
-			return b;
+			return Right<TLeft, NextRight>(func(std::get<1>(a)));
 		}
 	};
 
@@ -78,22 +76,51 @@ namespace CppMonad {
 		}
 	};
 
-	// it's also hacky
+	// it's hacky too
 	template <>
 	struct Apply<PartialEither> {
 		template <class Func, class TLeft, class TRight>
 		static auto apply1(
 			const Either<TLeft, Func>& func,
 			const Either<TLeft, TRight>& a) {
-			Either<TLeft, decltype(std::get<1>(func)(std::get<1>(a)))> b;
+			using NextRight = decltype(std::get<1>(func)(std::get<1>(a)));
 			if (func.index() == 1 && a.index() == 1) {
-				b = std::get<1>(func)(std::get<1>(a));
+				return Right<TLeft, NextRight>(std::get<1>(func)(std::get<1>(a)));
 			} else if (func.index() == 0) {
-				b = std::get<0>(func);
+				return Left<TLeft, NextRight>(static_cast<TLeft>(std::get<0>(func)));
 			} else {
-				b = std::get<0>(a);
+				return Left<TLeft, NextRight>(static_cast<TLeft>(std::get<0>(a)));
 			}
-			return b;
 		}
 	};
+	
+	template <class Func, class TLeft, class Head>
+	static auto applyN(
+		const Either<TLeft, Func>& func,
+		const Either<TLeft, Head>& head) {
+		return Apply<PartialEither>::apply1(func, head);
+	}
+	
+	template <class Func, class TLeft, class Head, class... Rest>
+	static auto applyN(
+		const Either<TLeft, Func>& func,
+		const Either<TLeft, Head>& head,
+		const Either<TLeft, Rest>&... rest) {
+		return applyN(applyN(func, head), rest...);
+	}
+	
+	template <class Func, class TLeft, class Head>
+	static auto liftN(
+		const Func& func,
+		const Either<TLeft, Head>& head) {
+		return map(func, head);
+	}
+	
+	template <class Func, class TLeft, class Head, class... Rest>
+	static auto liftN(
+		const Func& func,
+		const Either<TLeft, Head>& head,
+		const Either<TLeft, Rest>&... rest) {
+		return applyN(liftN(func, head), rest...);
+	}
 }

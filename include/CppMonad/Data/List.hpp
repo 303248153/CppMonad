@@ -39,7 +39,7 @@ namespace CppMonad {
 		static auto map(
 			const Func& func,
 			const List<A>& a) {
-			List<decltype(func(std::declval<const A>()))> b;
+			List<decltype(func(*a.cbegin()))> b;
 			std::transform(a.cbegin(), a.cend(), std::back_inserter(b), func);
 			return b;
 		}
@@ -72,7 +72,7 @@ namespace CppMonad {
 		static auto apply1(
 			const List<Func>& func,
 			const List<A>& a) {
-			List<decltype(std::declval<const Func>()(std::declval<const A>()))> b;
+			List<decltype((*func.cbegin())(*a.cbegin()))> b;
 			for (const auto& f : func) {
 				for (const auto& item : a) {
 					b.emplace_back(f(item));
@@ -96,7 +96,7 @@ namespace CppMonad {
 		static auto bind1(
 			const List<A>& a,
 			const Func& func) {
-			decltype(std::declval<const Func>()(std::declval<const A>())) b;
+			decltype(func(*a.cbegin())) b;
 			for (const auto& item : a) {
 				for (const auto& result : func(item)) {
 					b.emplace_back(result);

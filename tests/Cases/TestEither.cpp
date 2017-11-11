@@ -2,6 +2,7 @@
 #include <cassert>
 #include <CppMonad/Data/String.hpp>
 #include <CppMonad/Data/Either.hpp>
+#include <CppMonad/Utils/Partial.hpp>
 
 namespace CppMonadTests {
 	using namespace CppMonad;
@@ -35,7 +36,26 @@ namespace CppMonadTests {
 	}
 
 	void testEitherApply() {
+		auto rightStrA = Right<int, String>("abc");
+		auto rightStrB = Right<int, String>("abcde");
+		auto rightFunc = Right<int>(Partial([](auto&& a, auto&& b) { return a.size() + b.size(); }));
+		auto leftStr = Left<int, String>(1);
+		auto leftFunc = Left<int, PartialHolder<std::size_t(*)(String, String)>>(2);
+		assert(show(applyN(rightFunc, rightStrA, rightStrB)) == "Right 8");
+		assert(show(applyN(rightFunc, rightStrA, leftStr)) == "Left 1");
+		assert(show(applyN(leftFunc, rightStrA, rightStrB)) == "Left 2");
+		assert(show(applyN(leftFunc, leftStr, leftStr)) == "Left 2");
+	}
 
+	void testEitherApplyLift() {
+		auto concat = Partial([](auto&& a, auto&& b, auto&& c) { return a + b + c; });
+		auto rightStrA = Right<int, String>("hello");
+		auto rightStrB = Right<int, String>(" ");
+		auto rightStrC = Right<int, String>("world");
+		auto leftStr = Left<int, String>(1);
+		assert(show(liftN(concat, rightStrA, rightStrB, rightStrC)) == "Right hello world");
+		assert(show(liftN(concat, rightStrA, rightStrB, leftStr)) == "Left 1");
+		assert(show(liftN(concat, leftStr, rightStrB, rightStrC)) == "Left 1");
 	}
 
 	void testEitherApplicative() {

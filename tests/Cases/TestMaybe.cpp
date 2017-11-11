@@ -37,7 +37,7 @@ namespace CppMonadTests {
 		auto justStrB = Just(String("abcde"));
 		auto justFunc = Just(Partial([](auto&& a, auto&& b) { return a.size() + b.size(); }));
 		auto nothingStr = Nothing<String>();
-		auto nothingFunc = Nothing<PartialHolder<int(*)(String, String)>>();
+		auto nothingFunc = Nothing<PartialHolder<std::size_t(*)(String, String)>>();
 		assert(show(applyN(justFunc, justStrA, justStrB)) == "Just 8");
 		assert(show(applyN(justFunc, justStrA, nothingStr)) == "Nothing");
 		assert(show(applyN(nothingFunc, justStrA, justStrB)) == "Nothing");
