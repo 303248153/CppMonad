@@ -77,4 +77,23 @@ namespace CppMonad {
 			return Either<TLeft, TRight>();
 		}
 	};
+
+	// it's also hacky
+	template <>
+	struct Apply<PartialEither> {
+		template <class Func, class TLeft, class TRight>
+		static auto apply1(
+			const Either<TLeft, Func>& func,
+			const Either<TLeft, TRight>& a) {
+			Either<TLeft, decltype(std::get<1>(func)(std::get<1>(a)))> b;
+			if (func.index() == 1 && a.index() == 1) {
+				b = std::get<1>(func)(std::get<1>(a));
+			} else if (func.index() == 0) {
+				b = std::get<0>(func);
+			} else {
+				b = std::get<0>(a);
+			}
+			return b;
+		}
+	};
 }
