@@ -1,14 +1,49 @@
-# Implement haskell types in c++17
+# Header only library implements haskell types in c++17
 
-### Implemented Types:
+# Implemented types:
 
+- Either
+- List
+- Maybe
+- String
+
+# How to use:
+
+Add "CppMonad/include" to include path, then include header files:
+
+``` c++
+#include <CppMonad/Data/Either.hpp>
+#include <CppMonad/Data/List.hpp>
+#include <CppMonad/Data/Maybe.hpp>
+#include <CppMonad/Data/String.hpp>
+#include <CppMonad/Utils/Partial.hpp>
+```
+
+# Examples:
+
+### Either
+
+``` c++
 TODO
+```
 
-### Examples:
+### List
 
+``` c++
 TODO
+```
 
-Still working on, more details will post later.
+### Maybe
+
+``` c++
+TODO
+```
+
+### String
+
+``` c++
+TODO
+```
 
 # License
 
