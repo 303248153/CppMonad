@@ -59,9 +59,17 @@ namespace CppMonadTests {
 	}
 
 	void testEitherApplicative() {
+		auto rightStr = pure<Either, int>(String("abc"));
+		assert(show(rightStr) == "Right abc");
 	}
 
 	void testEitherBind() {
+		auto rightStr = Right<int>(String("abc"));
+		auto rightSize = bind1(rightStr, [](auto&& str) { return Right<int>(str.size()); });
+		assert(show(rightSize) == "Right 3");
+		auto leftStr = Left<int, String>(1);
+		auto leftSize = bind1(leftStr, [](auto&& str) { return Right<int>(str.size()); });
+		assert(show(leftSize) == "Left 1");
 	}
 
 	void testEither() {

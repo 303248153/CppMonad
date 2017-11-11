@@ -1,5 +1,6 @@
 #pragma once
 #include <variant>
+#include <type_traits>
 #include "../Class/Show.hpp"
 #include "../Class/Functor.hpp"
 #include "../Class/Semigroup.hpp"
@@ -122,5 +123,40 @@ namespace CppMonad {
 		const Either<TLeft, Head>& head,
 		const Either<TLeft, Rest>&... rest) {
 		return applyN(liftN(func, head), rest...);
+	}
+
+	// it's hacky too
+	template <>
+	struct Applicative<PartialEither> {
+		template <class TLeft, class TRight>
+		static Either<TLeft, TRight> pure(TRight&& value) {
+			return Right<TLeft, TRight>(std::forward<TRight>(value));
+		}
+	};
+
+	template <template <class, class> class F, class TLeft, class TRight,
+		std::enable_if_t<std::is_same_v<F<TLeft, TRight>, Either<TLeft, TRight>>, int> = 0>
+	static Either<TLeft, TRight> pure(TRight&& value) {
+		return Applicative<PartialEither>::pure<TLeft, TRight>(
+			std::forward<TRight>(value));
+	}
+
+	template <>
+	struct Bind<PartialEither> {
+		template <class Func, class TLeft, class TRight>
+		static auto bind1(
+			const Either<TLeft, TRight>& a,
+			const Func& func) {
+			using B = decltype(func(std::get<1>(a)));
+			if (a.index() == 1) {
+				return func(std::get<1>(a));
+			}
+			return B(std::get<0>(a));
+		}
+	};
+
+	template <class Func, class TLeft, class TRight>
+	static auto bind1(const Either<TLeft, TRight>& a, const Func& func) {
+		return Bind<PartialEither>::bind1(a, func);
 	}
 }
