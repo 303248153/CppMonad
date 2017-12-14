@@ -15,23 +15,23 @@ matrix:
       before_install:
         - export CC=gcc-7
         - export CXX=g++-7
-    - os: linux
-      dist: trusty
-      sudo: required
-      addons:
-        apt:
-          sources:
-            - llvm-toolchain-trusty-5.0
-          packages:
-            - clang-5.0
-            - libc++-dev
-            - libc++abi-dev
-            - cmake
-      before_install:
-        - export CC=clang-5.0
-        - export CXX=clang++-5.0
-        - export CXXFLAGS=-stdlib=libc++
-        - sudo touch /usr/include/xlocale.h
+#    - os: linux
+#      dist: trusty
+#      sudo: required
+#      addons:
+#        apt:
+#          sources:
+#            - llvm-toolchain-trusty-5.0
+#          packages:
+#            - clang-5.0
+#            - libc++-dev
+#            - libc++abi-dev
+#            - cmake
+#      before_install:
+#        - export CC=clang-5.0
+#        - export CXX=clang++-5.0
+#        - export CXXFLAGS=-stdlib=libc++
+#        - sudo touch /usr/include/xlocale.h
 
 
 
