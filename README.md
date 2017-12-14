@@ -2,6 +2,8 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4bf07f94d26640d6a9645406b46bee20)](https://www.codacy.com/app/303248153/CppMonad?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=303248153/CppMonad&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/303248153/CppMonad.svg?branch=master)](https://travis-ci.org/303248153/CppMonad)
+[![license](https://img.shields.io/github/license/303248153/CppMonad.svg)]() 
+[![GitHub release](https://img.shields.io/github/release/303248153/CppMonad.svg)]()
 
 # Implemented types:
 
